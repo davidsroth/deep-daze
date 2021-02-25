@@ -224,6 +224,7 @@ class DeepDaze(nn.Module):
         # else:
         #     partition = [1, 1, 1, 2, 4, 7]
         partition = [4, 5, 3, 2, 1, 1]
+        
         dbase = .38
         step = .1
         width = self.image_width
