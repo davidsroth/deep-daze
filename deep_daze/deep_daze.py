@@ -194,6 +194,65 @@ class DeepDaze(nn.Module):
         loss = -self.loss_coef * torch.cosine_similarity(text_embed, image_embed, dim=-1).mean()
         return out, loss
 
+    def generate_size_schedule(self):
+        batches = 0
+        counter = 0
+        self.scheduled_sizes = []
+
+        while batches <= self.total_batches:
+            counter += 1
+            sizes = self.sample_sizes(counter)
+            batches += len(sizes)
+            self.scheduled_sizes.extend(sizes)
+
+    def sample_sizes(self, counter):
+        pieces_per_group = 4
+
+        # 6 piece schedule increasing in context as model saturates
+        # if counter < 500:
+        #     partition = [4, 5, 3, 2, 1, 1]
+        # elif counter < 1000:
+        #     partition = [2, 5, 4, 2, 2, 1]
+        # elif counter < 1500:
+        #     partition = [1, 4, 5, 3, 2, 1]
+        # elif counter < 2000:
+        #     partition = [1, 3, 4, 4, 2, 2]
+        # elif counter < 2500:
+        #     partition = [1, 2, 2, 4, 4, 3]
+        # elif counter < 3000:
+        #     partition = [1, 1, 2, 3, 4, 5]
+        # else:
+        #     partition = [1, 1, 1, 2, 4, 7]
+        partition = [4, 5, 3, 2, 1, 1]
+        dbase = .38
+        step = .1
+        width = self.image_width
+
+        sizes = []
+        for part_index in range(len(partition)):
+            groups = partition[part_index]
+            for _ in range(groups * pieces_per_group):
+                sizes.append(torch.randint(
+                    int((dbase + step * part_index + .01) * width),
+                    int((dbase + step * (1 + part_index)) * width), ()))
+
+        sizes.sort()
+        return sizes
+
+
+    
+def create_text_path(text=None, img=None, encoding=None):
+    if text is not None:
+        input_name = text.replace(" ", "_")[:perceptor.context_length]
+    elif img is not None:
+        if isinstance(img, str):
+            input_name = "".join(img.replace(" ", "_").split(".")[:-1])
+        else:
+            input_name = "PIL_img"
+    else:
+        input_name = "your_encoding"
+    return input_name
+
 
 class Imagine(nn.Module):
     def __init__(
