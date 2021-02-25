@@ -224,7 +224,7 @@ class DeepDaze(nn.Module):
         # else:
         #     partition = [1, 1, 1, 2, 4, 7]
         partition = [4, 5, 3, 2, 1, 1]
-        
+
         dbase = .38
         step = .1
         width = self.image_width
@@ -469,8 +469,6 @@ class Imagine(nn.Module):
         pil_img.save(f"{self.textpath}.jpg", quality=95, subsampling=0)
         #save_image(img, self.filename)
         #save_image(img, f"{self.textpath}.png")
-
-        tqdm.write(f'image updated at "./{str(self.filename)}"')
 
     def forward(self):
         if exists(self.start_image):
