@@ -308,6 +308,11 @@ class Imagine(nn.Module):
             random.seed(seed)
             torch.backends.cudnn.deterministic = True
             
+        self.savetodrive = savetodrive
+        if savetodrive and COLAB:
+            drive.mount('/content/drive')
+            self.gdrive_save_location = drive_location
+
         # fields for story creation:
         self.create_story = create_story
         self.words = None
@@ -367,10 +372,7 @@ class Imagine(nn.Module):
 
             image_tensor = self.clip_img_transform(image)[None, ...].cuda()
             self.start_image = image_tensor
-        self.savetodrive = savetodrive
-        if savetodrive and COLAB:
-            drive.mount('/content/drive')
-            self.gdrive_save_location = drive_location
+
             
     def create_clip_encoding(self, text=None, img=None, encoding=None):
         self.text = text
