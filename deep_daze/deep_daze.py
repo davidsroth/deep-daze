@@ -18,11 +18,19 @@ from PIL import Image
 import torchvision.transforms as T
 from torchvision.utils import save_image
 
-from tqdm import trange, tqdm
+
 
 from deep_daze.clip import load, tokenize
 
 assert torch.cuda.is_available(), 'CUDA must be available in order to use Deep Daze'
+
+try:
+    from google.colab import drive
+    from tqdm.notebook import trange, tqdm
+    COLAB=True
+except:
+    from tqdm import trange, tqdm
+    COLAB=False
 
 # graceful keyboard interrupt
 
@@ -209,21 +217,20 @@ class DeepDaze(nn.Module):
         pieces_per_group = 4
 
         # 6 piece schedule increasing in context as model saturates
-        # if counter < 500:
-        #     partition = [4, 5, 3, 2, 1, 1]
-        # elif counter < 1000:
-        #     partition = [2, 5, 4, 2, 2, 1]
-        # elif counter < 1500:
-        #     partition = [1, 4, 5, 3, 2, 1]
-        # elif counter < 2000:
-        #     partition = [1, 3, 4, 4, 2, 2]
-        # elif counter < 2500:
-        #     partition = [1, 2, 2, 4, 4, 3]
-        # elif counter < 3000:
-        #     partition = [1, 1, 2, 3, 4, 5]
-        # else:
-        #     partition = [1, 1, 1, 2, 4, 7]
-        partition = [4, 5, 3, 2, 1, 1]
+        if counter < 500:
+            partition = [4, 5, 3, 2, 1, 1]
+        elif counter < 1000:
+            partition = [2, 5, 4, 2, 2, 1]
+        elif counter < 1500:
+            partition = [1, 4, 5, 3, 2, 1]
+        elif counter < 2000:
+            partition = [1, 3, 4, 4, 2, 2]
+        elif counter < 2500:
+            partition = [1, 2, 2, 4, 4, 3]
+        elif counter < 3000:
+            partition = [1, 1, 2, 3, 4, 5]
+        else:
+            partition = [1, 1, 1, 2, 4, 7]
 
         dbase = .38
         step = .1
@@ -279,12 +286,17 @@ class Imagine(nn.Module):
             start_image_lr=3e-4,
             theta_initial=None,
             theta_hidden=None,
+<<<<<<< HEAD
             lower_bound_cutout=0.1, # should be smaller than 0.8
             upper_bound_cutout=1.0,
             saturate_bound=False,
             create_story=False,
             story_start_words=5,
             story_words_per_epoch=5,
+=======
+            savetodrive=False,
+            drive_location=""
+>>>>>>> add option to save to gdrive
     ):
 
         super().__init__()
@@ -355,6 +367,10 @@ class Imagine(nn.Module):
 
             image_tensor = self.clip_img_transform(image)[None, ...].cuda()
             self.start_image = image_tensor
+        self.savetodrive = savetodrive
+        if savetodrive and COLAB:
+            drive.mount('/content/drive')
+            self.gdrive_save_location = drive_location
             
     def create_clip_encoding(self, text=None, img=None, encoding=None):
         self.text = text
@@ -430,7 +446,13 @@ class Imagine(nn.Module):
         if self.save_date_time:
             current_time = datetime.now().strftime("%y%m%d-%H%M%S_%f")
             output_path = f"{current_time}_{output_path}"
+<<<<<<< HEAD
         return Path(f"{output_path}.jpg")
+=======
+        if self.savetodrive:
+            output_path = os.path.join("/","content", "drive", "MyDrive", f"{self.gdrive_save_location}", output_path)
+        return Path(f"{output_path}.png")
+>>>>>>> add option to save to gdrive
 
     def train_step(self, epoch, iteration):
         total_loss = 0
@@ -463,12 +485,18 @@ class Imagine(nn.Module):
         if img is None:
             img = self.model(self.clip_encoding, return_loss=False).cpu().float().clamp(0., 1.)
         self.filename = self.image_output_path(sequence_number=sequence_number)
+<<<<<<< HEAD
         
         pil_img = T.ToPILImage()(img.squeeze())
         pil_img.save(self.filename, quality=95, subsampling=0)
         pil_img.save(f"{self.textpath}.jpg", quality=95, subsampling=0)
         #save_image(img, self.filename)
         #save_image(img, f"{self.textpath}.png")
+=======
+        save_image(img, self.filename)
+        save_image(img, f"{self.filename}")
+        save_image(img, f"{self.textpath}.png")
+>>>>>>> add option to save to gdrive
 
     def forward(self):
         if exists(self.start_image):
