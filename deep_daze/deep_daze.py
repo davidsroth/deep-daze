@@ -494,7 +494,6 @@ class Imagine(nn.Module):
         #save_image(img, f"{self.textpath}.png")
 =======
         save_image(img, self.filename)
-        save_image(img, f"{self.filename}")
         save_image(img, f"{self.textpath}.png")
 >>>>>>> add option to save to gdrive
 
