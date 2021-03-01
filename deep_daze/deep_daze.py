@@ -25,7 +25,6 @@ from deep_daze.clip import load, tokenize
 assert torch.cuda.is_available(), 'CUDA must be available in order to use Deep Daze'
 
 try:
-    from google.colab import drive
     from tqdm.notebook import trange, tqdm
     COLAB=True
 except:
@@ -285,6 +284,7 @@ class Imagine(nn.Module):
             start_image_train_iters=10,
             start_image_lr=3e-4,
             theta_initial=None,
+<<<<<<< HEAD
             theta_hidden=None,
 <<<<<<< HEAD
             lower_bound_cutout=0.1, # should be smaller than 0.8
@@ -297,6 +297,9 @@ class Imagine(nn.Module):
             savetodrive=False,
             drive_location=""
 >>>>>>> add option to save to gdrive
+=======
+            theta_hidden=None
+>>>>>>> strange argument behavior, rolling back gdrive saving
     ):
 
         super().__init__()
@@ -308,11 +311,6 @@ class Imagine(nn.Module):
             random.seed(seed)
             torch.backends.cudnn.deterministic = True
             
-        self.savetodrive = savetodrive
-        if savetodrive and COLAB:
-            drive.mount('/content/drive')
-            self.gdrive_save_location = drive_location
-
         # fields for story creation:
         self.create_story = create_story
         self.words = None
@@ -449,10 +447,13 @@ class Imagine(nn.Module):
             current_time = datetime.now().strftime("%y%m%d-%H%M%S_%f")
             output_path = f"{current_time}_{output_path}"
 <<<<<<< HEAD
+<<<<<<< HEAD
         return Path(f"{output_path}.jpg")
 =======
         if self.savetodrive:
             output_path = os.path.join("/","content", "drive", "MyDrive", f"{self.gdrive_save_location}", output_path)
+=======
+>>>>>>> strange argument behavior, rolling back gdrive saving
         return Path(f"{output_path}.png")
 >>>>>>> add option to save to gdrive
 
