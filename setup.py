@@ -35,7 +35,8 @@ setup(
     'torch_optimizer',
     'torchvision>=0.8.2',
     'tqdm',
-    'regex'
+    'regex',
+    'clip'
   ],
   classifiers=[
     'Development Status :: 4 - Beta',

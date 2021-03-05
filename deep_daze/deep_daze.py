@@ -18,9 +18,7 @@ from PIL import Image
 import torchvision.transforms as T
 from torchvision.utils import save_image
 
-
-
-from deep_daze.clip import load, tokenize
+import clip
 
 assert torch.cuda.is_available(), 'CUDA must be available in order to use Deep Daze'
 
@@ -43,7 +41,7 @@ def signal_handling(signum, frame):
 
 signal.signal(signal.SIGINT, signal_handling)
 
-perceptor, normalize_image = load()
+perceptor, normalize_image = clip.load('RN101')
 
 # Helpers
 
