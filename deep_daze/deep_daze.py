@@ -386,7 +386,7 @@ class Imagine(nn.Module):
         return encoding
 
     def create_text_encoding(self, text):
-        tokenized_text = tokenize(text).cuda()
+        tokenized_text = clip.tokenize(text).cuda()
         with torch.no_grad():
             text_encoding = perceptor.encode_text(tokenized_text).detach()
         return text_encoding
