@@ -41,7 +41,7 @@ def signal_handling(signum, frame):
 
 signal.signal(signal.SIGINT, signal_handling)
 
-perceptor, normalize_image = clip.load('RN101')
+perceptor, normalize_image = clip.load('RN101', jit=True)
 
 # Helpers
 
