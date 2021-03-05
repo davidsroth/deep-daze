@@ -36,7 +36,7 @@ setup(
     'torchvision>=0.8.2',
     'tqdm',
     'regex',
-    'clip'
+    'clip @ git+https://github.com/openai/CLIP.git'
   ],
   classifiers=[
     'Development Status :: 4 - Beta',
